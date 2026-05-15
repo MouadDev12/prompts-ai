@@ -7,6 +7,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::resource('prompts', PromptController::class);
-});
+// Routes CRUD des prompts (sans middleware auth pour l'instant — à activer quand l'authentification sera configurée)
+Route::resource('prompts', PromptController::class);

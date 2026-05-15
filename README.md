@@ -1,58 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prompts AI
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Application web de gestion de prompts IA, construite avec **Laravel 13** et **Tailwind CSS 4**.  
+Organisez, recherchez et copiez vos prompts en un clic.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Aperçu
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Page | Description |
+|------|-------------|
+| Accueil | Hero page avec présentation des fonctionnalités |
+| Liste | Tableau paginé avec recherche full-text et filtre par famille |
+| Détail | Affichage complet avec bouton "Copier" le prompt |
+| Création | Formulaire avec compteur de caractères en temps réel |
+| Édition | Modification avec validation inline par champ |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Stack technique
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP** 8.3
+- **Laravel** 13.x
+- **Tailwind CSS** 4.x (via Vite)
+- **SQLite** (base de données par défaut)
+- **Vite** 8.x
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Prérequis
 
-## Agentic Development
+- PHP >= 8.3
+- Composer
+- Node.js >= 18 & npm
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
+
+## Installation
 
 ```bash
-composer require laravel/boost --dev
+# 1. Cloner le dépôt
+git clone https://github.com/votre-utilisateur/prompts-ai.git
+cd prompts-ai
 
-php artisan boost:install
+# 2. Installer les dépendances PHP
+composer install
+
+# 3. Copier le fichier d'environnement
+cp .env.example .env
+
+# 4. Générer la clé d'application
+php artisan key:generate
+
+# 5. Créer la base de données SQLite
+touch database/database.sqlite
+
+# 6. Lancer les migrations
+php artisan migrate
+
+# 7. (Optionnel) Peupler avec des données d'exemple
+php artisan db:seed
+
+# 8. Installer les dépendances front-end
+npm install
+
+# 9. Compiler les assets
+npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Démarrage en développement
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer run dev
+```
 
-## Code of Conduct
+Cette commande lance en parallèle :
+- `php artisan serve` — serveur Laravel
+- `npm run dev` — Vite avec hot-reload
+- `php artisan queue:listen` — worker de queue
+- `php artisan pail` — logs en temps réel
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+L'application est accessible sur [http://localhost:8000](http://localhost:8000).
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Structure du projet
 
-## License
+```
+prompts-ai/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── PromptController.php   # CRUD complet des prompts
+│   │   └── Middleware/
+│   │       └── AuthMiddleware.php
+│   └── Models/
+│       ├── Prompt.php                 # Modèle prompt (titre, description, prompt_text)
+│       └── Famille.php                # Modèle famille (titre, type)
+├── database/
+│   ├── migrations/                    # Tables prompts et familles
+│   └── seeders/
+│       └── DatabaseSeeder.php         # 5 familles + 3 prompts d'exemple
+├── resources/
+│   └── views/
+│       ├── layouts/app.blade.php      # Layout principal (header sticky, footer)
+│       ├── welcome.blade.php          # Page d'accueil
+│       ├── index.blade.php            # Liste avec recherche et filtres
+│       ├── show.blade.php             # Détail + bouton copier
+│       ├── create.blade.php           # Formulaire de création
+│       └── edit.blade.php             # Formulaire d'édition
+└── routes/
+    └── web.php                        # Routes resourceful
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Fonctionnalités
+
+- **CRUD complet** — créer, lire, modifier, supprimer des prompts
+- **Familles** — classement des prompts par catégorie (titre + type)
+- **Recherche full-text** — filtre sur le titre, la description et le prompt_text
+- **Filtre par famille** — combinable avec la recherche, persistant à la pagination
+- **Copier en un clic** — bouton clipboard sur la page de détail
+- **Compteur de caractères** — affiché en temps réel sur les textareas
+- **Validation inline** — erreurs affichées champ par champ
+- **Pagination** — 9 prompts par page avec conservation des filtres
+- **Notifications flash** — confirmation visuelle après chaque action
+
+---
+
+## Commandes utiles
+
+```bash
+# Migrations
+php artisan migrate
+php artisan migrate:fresh --seed   # Réinitialiser + seeder
+
+# Cache
+php artisan config:clear
+php artisan view:clear
+
+# Tests
+php artisan test
+```
+
+---
+
+## Contribution
+
+Les contributions sont les bienvenues.
+
+1. Forkez le dépôt
+2. Créez une branche : `git checkout -b feature/ma-fonctionnalite`
+3. Commitez vos changements : `git commit -m "feat: description"`
+4. Poussez la branche : `git push origin feature/ma-fonctionnalite`
+5. Ouvrez une Pull Request
+
+---
+
+## Licence
+
+Ce projet est sous licence [MIT](LICENSE).

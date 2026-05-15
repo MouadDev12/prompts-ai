@@ -2,12 +2,16 @@
 
 @section('content')
 <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-semibold text-gray-900">Ajouter un nouveau prompt</h1>
             <p class="mt-1 text-sm text-gray-500">Créez un prompt IA structuré avec sa famille associée.</p>
         </div>
-        <a href="{{ route('prompts.index') }}" class="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Retour à la liste</a>
+        <a href="{{ route('prompts.index') }}"
+           class="inline-flex items-center rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            ← Retour à la liste
+        </a>
     </div>
 
     @if ($errors->any())
@@ -24,35 +28,98 @@
     <form action="{{ route('prompts.store') }}" method="POST" class="space-y-6">
         @csrf
 
+        {{-- Titre --}}
         <div>
-            <label for="titre" class="mb-2 block text-sm font-medium text-gray-700">Titre</label>
-            <input type="text" name="titre" id="titre" value="{{ old('titre') }}" required class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+            <label for="titre" class="mb-2 block text-sm font-medium text-gray-700">
+                Titre <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="titre" id="titre" value="{{ old('titre') }}"
+                   placeholder="Ex : Rédaction d'email professionnel"
+                   class="w-full rounded-2xl border @error('titre') border-red-400 bg-red-50 @else border-gray-300 bg-white @enderror px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition" />
+            @error('titre')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
+        {{-- Description --}}
         <div>
-            <label for="description" class="mb-2 block text-sm font-medium text-gray-700">Description</label>
-            <textarea name="description" id="description" rows="4" required class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">{{ old('description') }}</textarea>
+            <div class="mb-2 flex items-center justify-between">
+                <label for="description" class="text-sm font-medium text-gray-700">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                <span id="desc-count" class="text-xs text-gray-400">0 caractère(s)</span>
+            </div>
+            <textarea name="description" id="description" rows="4"
+                      placeholder="Décrivez l'objectif et le contexte de ce prompt…"
+                      oninput="updateCount('description','desc-count')"
+                      class="w-full rounded-2xl border @error('description') border-red-400 bg-red-50 @else border-gray-300 bg-white @enderror px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition">{{ old('description') }}</textarea>
+            @error('description')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
+        {{-- Prompt Text --}}
         <div>
-            <label for="prompt_text" class="mb-2 block text-sm font-medium text-gray-700">Prompt Text</label>
-            <textarea name="prompt_text" id="prompt_text" rows="5" required class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">{{ old('prompt_text') }}</textarea>
+            <div class="mb-2 flex items-center justify-between">
+                <label for="prompt_text" class="text-sm font-medium text-gray-700">
+                    Prompt Text <span class="text-red-500">*</span>
+                </label>
+                <span id="prompt-count" class="text-xs text-gray-400">0 caractère(s)</span>
+            </div>
+            <textarea name="prompt_text" id="prompt_text" rows="7"
+                      placeholder="Saisissez le texte complet du prompt IA…"
+                      oninput="updateCount('prompt_text','prompt-count')"
+                      class="w-full rounded-2xl border @error('prompt_text') border-red-400 bg-red-50 @else border-gray-300 bg-white @enderror px-4 py-3 font-mono text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition">{{ old('prompt_text') }}</textarea>
+            @error('prompt_text')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
+        {{-- Famille --}}
         <div>
-            <label for="famille_id" class="mb-2 block text-sm font-medium text-gray-700">Famille</label>
-            <select name="famille_id" id="famille_id" required class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100">
-                <option value="">Sélectionnez une famille</option>
+            <label for="famille_id" class="mb-2 block text-sm font-medium text-gray-700">
+                Famille <span class="text-red-500">*</span>
+            </label>
+            <select name="famille_id" id="famille_id"
+                    class="w-full rounded-2xl border @error('famille_id') border-red-400 bg-red-50 @else border-gray-300 bg-white @enderror px-4 py-3 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition">
+                <option value="">— Sélectionnez une famille —</option>
                 @foreach($familles as $famille)
-                    <option value="{{ $famille->id }}" @selected(old('famille_id') == $famille->id)>{{ $famille->titre }} ({{ $famille->type }})</option>
+                    <option value="{{ $famille->id }}" @selected(old('famille_id') == $famille->id)>
+                        {{ $famille->titre }} ({{ $famille->type }})
+                    </option>
                 @endforeach
             </select>
+            @error('famille_id')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">Ajouter le prompt</button>
-            <a href="{{ route('prompts.index') }}" class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">Annuler</a>
+        {{-- Actions --}}
+        <div class="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
+            <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                Ajouter le prompt
+            </button>
+            <a href="{{ route('prompts.index') }}"
+               class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                Annuler
+            </a>
         </div>
     </form>
 </div>
+
+<script>
+function updateCount(fieldId, countId) {
+    const len = document.getElementById(fieldId).value.length;
+    document.getElementById(countId).textContent = len + ' caractère' + (len > 1 ? 's' : '');
+}
+// Init au chargement (valeurs old())
+document.addEventListener('DOMContentLoaded', () => {
+    updateCount('description', 'desc-count');
+    updateCount('prompt_text', 'prompt-count');
+});
+</script>
 @endsection

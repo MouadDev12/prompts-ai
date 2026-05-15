@@ -2,64 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Famille;
+use App\Models\Prompt;
 use Illuminate\Http\Request;
 
 class PromptController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $prompts = Prompt::with('famille')->paginate(9);
+        $prompts = Prompt::with('famille')->orderBy('created_at', 'desc')->paginate(9);
+
         return view('index', compact('prompts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $famille = Famille::all();
-        return view ('create', compact('familles'));
+        $familles = Famille::orderBy('titre')->get();
 
+        return view('create', compact('familles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'titre'       => 'required',
-            'description' => 'required',
-            'prompt_text' => 'required',
-            'famille_id'  => 'required',
-        ]);
+        $data = $this->validatePrompt($request);
 
-        Prompt::create($request->all());
+        Prompt::create($data);
 
         return redirect()->route('prompts.index')
                          ->with('success', 'Prompt ajouté avec succès !');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Prompt $prompt)
     {
-        //
+        $prompt->load('famille');
+
+        return view('show', compact('prompt'));
     }
 
-   
+    public function edit(Prompt $prompt)
+    {
+        $familles = Famille::orderBy('titre')->get();
 
-    /**
-     * Remove the specified resource from storage.
-     */
+        return view('edit', compact('prompt', 'familles'));
+    }
+
+    public function update(Request $request, Prompt $prompt)
+    {
+        $data = $this->validatePrompt($request);
+
+        $prompt->update($data);
+
+        return redirect()->route('prompts.index')
+                         ->with('success', 'Prompt mis à jour avec succès !');
+    }
+
     public function destroy(Prompt $prompt)
     {
         $prompt->delete();
+
         return redirect()->route('prompts.index')
                          ->with('success', 'Prompt supprimé avec succès !');
     }
-    
+
+    protected function validatePrompt(Request $request): array
+    {
+        return $request->validate([
+            'titre'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'prompt_text' => 'required|string',
+            'famille_id'  => 'required|exists:familles,id',
+        ]);
+    }
+}
