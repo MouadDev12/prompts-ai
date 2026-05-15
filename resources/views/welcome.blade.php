@@ -39,33 +39,45 @@
     <div>
         <h2 class="mb-6 text-lg font-semibold text-gray-900">Ce que vous pouvez faire</h2>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
-                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <a href="{{ route('prompts.create') }}"
+               class="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:ring-indigo-300 hover:shadow-md transition-all">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                     </svg>
                 </div>
-                <h3 class="font-semibold text-gray-900">Créer des prompts</h3>
+                <h3 class="font-semibold text-gray-900 group-hover:text-indigo-700 transition-colors">Créer des prompts</h3>
                 <p class="mt-1 text-sm text-gray-500">Rédigez et structurez vos prompts avec titre, description et texte complet.</p>
-            </div>
-            <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
-                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Créer maintenant →
+                </span>
+            </a>
+            <a href="{{ route('prompts.index') }}"
+               class="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:ring-amber-300 hover:shadow-md transition-all">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-100 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 11h6M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                     </svg>
                 </div>
-                <h3 class="font-semibold text-gray-900">Rechercher & filtrer</h3>
+                <h3 class="font-semibold text-gray-900 group-hover:text-amber-700 transition-colors">Rechercher & filtrer</h3>
                 <p class="mt-1 text-sm text-gray-500">Retrouvez rapidement un prompt par mot-clé ou par famille de catégorie.</p>
-            </div>
-            <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200">
-                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-medium text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Parcourir les prompts →
+                </span>
+            </a>
+            <a href="{{ route('prompts.index') }}"
+               class="group rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:ring-green-300 hover:shadow-md transition-all">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2m-6 12h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/>
                     </svg>
                 </div>
-                <h3 class="font-semibold text-gray-900">Copier en un clic</h3>
+                <h3 class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors">Copier en un clic</h3>
                 <p class="mt-1 text-sm text-gray-500">Copiez le texte d'un prompt dans le presse-papier pour l'utiliser immédiatement.</p>
-            </div>
+                <span class="mt-3 inline-flex items-center gap-1 text-xs font-medium text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Voir les prompts →
+                </span>
+            </a>
         </div>
     </div>
 

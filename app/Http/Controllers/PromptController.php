@@ -8,11 +8,27 @@ use Illuminate\Http\Request;
 
 class PromptController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $prompts = Prompt::with('famille')->orderBy('created_at', 'desc')->paginate(9);
+        $query = Prompt::with('famille')->orderBy('created_at', 'desc');
 
-        return view('index', compact('prompts'));
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('titre', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('prompt_text', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('famille_id')) {
+            $query->where('famille_id', $request->famille_id);
+        }
+
+        $prompts  = $query->paginate(9)->withQueryString();
+        $familles = Famille::orderBy('titre')->get();
+
+        return view('index', compact('prompts', 'familles'));
     }
 
     public function create()
