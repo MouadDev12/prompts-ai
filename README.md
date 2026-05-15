@@ -9,7 +9,7 @@ Organisez, recherchez et copiez vos prompts en un clic.
 
 | Page | Description |
 |------|-------------|
-| Accueil | Hero page avec présentation des fonctionnalités |
+| Accueil | Hero page avec 3 cartes cliquables vers les fonctionnalités |
 | Liste | Tableau paginé avec recherche full-text et filtre par famille |
 | Détail | Affichage complet avec bouton "Copier" le prompt |
 | Création | Formulaire avec compteur de caractères en temps réel |
@@ -19,11 +19,10 @@ Organisez, recherchez et copiez vos prompts en un clic.
 
 ## Stack technique
 
-- **PHP** 8.3
-- **Laravel** 13.x
-- **Tailwind CSS** 4.x (via Vite)
+- **PHP** 8.5
+- **Laravel** 13.9
+- **Tailwind CSS** 4.x — chargé via CDN (pas de compilation Vite requise)
 - **SQLite** (base de données par défaut)
-- **Vite** 8.x
 
 ---
 
@@ -31,7 +30,8 @@ Organisez, recherchez et copiez vos prompts en un clic.
 
 - PHP >= 8.3
 - Composer
-- Node.js >= 18 & npm
+
+> **Note :** Node.js / npm ne sont **pas nécessaires** — Tailwind CSS est chargé via CDN dans le layout.
 
 ---
 
@@ -59,29 +59,19 @@ php artisan migrate
 
 # 7. (Optionnel) Peupler avec des données d'exemple
 php artisan db:seed
-
-# 8. Installer les dépendances front-end
-npm install
-
-# 9. Compiler les assets
-npm run build
 ```
 
 ---
 
-## Démarrage en développement
+## Démarrage
 
 ```bash
-composer run dev
+php artisan serve
 ```
 
-Cette commande lance en parallèle :
-- `php artisan serve` — serveur Laravel
-- `npm run dev` — Vite avec hot-reload
-- `php artisan queue:listen` — worker de queue
-- `php artisan pail` — logs en temps réel
+L'application est accessible sur [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-L'application est accessible sur [http://localhost:8000](http://localhost:8000).
+> Pas besoin de `npm run dev` — Tailwind CSS est chargé directement depuis le CDN.
 
 ---
 
@@ -92,7 +82,7 @@ prompts-ai/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   └── PromptController.php   # CRUD complet des prompts
+│   │   │   └── PromptController.php   # CRUD complet + recherche & filtre
 │   │   └── Middleware/
 │   │       └── AuthMiddleware.php
 │   └── Models/
@@ -101,11 +91,11 @@ prompts-ai/
 ├── database/
 │   ├── migrations/                    # Tables prompts et familles
 │   └── seeders/
-│       └── DatabaseSeeder.php         # 5 familles + 3 prompts d'exemple
+│       └── DatabaseSeeder.php
 ├── resources/
 │   └── views/
-│       ├── layouts/app.blade.php      # Layout principal (header sticky, footer)
-│       ├── welcome.blade.php          # Page d'accueil
+│       ├── layouts/app.blade.php      # Layout principal — Tailwind via CDN
+│       ├── welcome.blade.php          # Page d'accueil avec cartes cliquables
 │       ├── index.blade.php            # Liste avec recherche et filtres
 │       ├── show.blade.php             # Détail + bouton copier
 │       ├── create.blade.php           # Formulaire de création
@@ -125,8 +115,29 @@ prompts-ai/
 - **Copier en un clic** — bouton clipboard sur la page de détail
 - **Compteur de caractères** — affiché en temps réel sur les textareas
 - **Validation inline** — erreurs affichées champ par champ
-- **Pagination** — 9 prompts par page avec conservation des filtres
-- **Notifications flash** — confirmation visuelle après chaque action
+- **Pagination** — 9 prompts par page avec conservation des filtres (`withQueryString`)
+- **Notifications flash** — confirmation visuelle après chaque action CRUD
+- **Cartes d'accueil cliquables** — navigation directe vers Créer, Rechercher et Copier
+- **Tailwind CSS via CDN** — aucune étape de compilation front-end requise
+
+---
+
+## Modifications apportées
+
+### Correction Vite manifest introuvable
+Le layout `resources/views/layouts/app.blade.php` utilisait `@vite(...)` ce qui causait une erreur  
+`ViteManifestNotFoundException` au démarrage sans compilation préalable.  
+**Fix :** remplacement par un tag `<script src="https://cdn.tailwindcss.com">` — l'application fonctionne sans `npm run build`.
+
+### Recherche & filtre fonctionnels
+La méthode `index()` du `PromptController` ne passait pas `$familles` à la vue et n'implémentait pas  
+la logique de recherche/filtre malgré le formulaire présent dans `index.blade.php`.  
+**Fix :** refactoring de `index()` pour accepter les paramètres `search` et `famille_id`, filtrer  
+la requête Eloquent en conséquence, et passer `$familles` à la vue.
+
+### Cartes d'accueil cliquables
+Les 3 cartes "Ce que vous pouvez faire" dans `welcome.blade.php` étaient de simples `<div>` non interactifs.  
+**Fix :** conversion en balises `<a>` avec effets hover (ring coloré, ombre, texte indicatif au survol).
 
 ---
 
