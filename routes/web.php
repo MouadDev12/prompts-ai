@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\PromptController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// routes/web.php
-
-Route::resource('/prompts', PromptController::class)
-     ->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('prompts', PromptController::class);
+});
