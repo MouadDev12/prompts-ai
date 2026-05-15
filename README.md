@@ -122,24 +122,7 @@ prompts-ai/
 
 ---
 
-## Modifications apportées
 
-### Correction Vite manifest introuvable
-Le layout `resources/views/layouts/app.blade.php` utilisait `@vite(...)` ce qui causait une erreur  
-`ViteManifestNotFoundException` au démarrage sans compilation préalable.  
-**Fix :** remplacement par un tag `<script src="https://cdn.tailwindcss.com">` — l'application fonctionne sans `npm run build`.
-
-### Recherche & filtre fonctionnels
-La méthode `index()` du `PromptController` ne passait pas `$familles` à la vue et n'implémentait pas  
-la logique de recherche/filtre malgré le formulaire présent dans `index.blade.php`.  
-**Fix :** refactoring de `index()` pour accepter les paramètres `search` et `famille_id`, filtrer  
-la requête Eloquent en conséquence, et passer `$familles` à la vue.
-
-### Cartes d'accueil cliquables
-Les 3 cartes "Ce que vous pouvez faire" dans `welcome.blade.php` étaient de simples `<div>` non interactifs.  
-**Fix :** conversion en balises `<a>` avec effets hover (ring coloré, ombre, texte indicatif au survol).
-
----
 
 ## Commandes utiles
 
